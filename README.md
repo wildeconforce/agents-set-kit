@@ -1,20 +1,24 @@
 # Agents Set Kit
 
-> **Zero → working AI agent stack**, in one afternoon.
-> Claude Code · OpenClaw · Ollama · Telegram 봇 — 처음부터 끝까지.
+> **5개 AI 도구를 한 번에 셋업하는 한국어 가이드.**
+> Claude Code · OpenClaw · Ollama · OpenRouter · Telegram 봇 — 처음부터 끝까지.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-active-brightgreen.svg)]()
+[![Korean](https://img.shields.io/badge/lang-한국어-blue.svg)](README.md)
+[![English](https://img.shields.io/badge/lang-English-lightgrey.svg)](README.en.md)
+
+🇰🇷 한국어 (현재) · 🇺🇸 [English](README.en.md)
 
 ---
 
 ## 🎯 이게 뭔가요
 
-AI 도구 처음 쓰는 사람도 따라하면 **자기 컴퓨터에서 AI 에이전트 풀스택**이 돌아갑니다.
+AI 도구 처음 쓰는 사람도 따라하면 **자기 컴퓨터에서 AI 에이전트 풀스택**이 돌아갑니다. 5개 도구가 서로 연결돼서.
 
 **최종 결과**:
-- 터미널에서 자연어로 AI한테 명령
-- 무료 모델 여러 개를 한 곳에서 사용 (Llama / Qwen / GPT-OSS)
+- 터미널에서 자연어로 AI한테 명령 (Claude Code)
+- 무료 모델 여러 개를 한 곳에서 사용 (Ollama / OpenRouter / OpenClaw)
 - 텔레그램으로 어디서든 AI에게 일 시키기
 - 라이브 대시보드로 에이전트 작업 모니터링
 
@@ -22,6 +26,22 @@ AI 도구 처음 쓰는 사람도 따라하면 **자기 컴퓨터에서 AI 에�
 - AI 처음 쓰는 사람 — 클릭 위치까지 명시
 - "Claude.ai만 써봤는데 그 이상 가고 싶다"
 - 커스텀 자동화 / 챗봇을 만들고 싶다
+
+---
+
+## 🆚 비슷한 키트와 뭐가 다른가요
+
+GitHub에 [Claude Code](https://github.com/davila7/claude-code-templates) [관련](https://github.com/peterkrueck/Claude-Code-Development-Kit) [스타터](https://github.com/centminmod/my-claude-code-setup) 키트는 많습니다. 이 키트의 차별점:
+
+| 항목 | 기존 인기 키트 | **Agents Set Kit** |
+|------|---------------|--------------------|
+| 언어 | 영어만 | **한국어 우선 + 영어 병행** |
+| 범위 | Claude Code 단일 | **Claude Code + OpenClaw + Ollama + OpenRouter + Telegram 통합** |
+| 비용 | Claude Pro $20/월 가정 | **무료 한도 + 무료 모델 + 로컬로 월 $0 가능** |
+| 대상 | 개발자/CC 구독자 | **AI 처음 쓰는 입문자 (클릭 위치까지 명시)** |
+| 구성 | 컨피그/플러그인 모음 | **단계별 셋업 가이드 (01 → 08)** |
+
+요약: "한국어로, 무료로, 처음부터, 5개 도구를 다 연결되게" 하는 키트가 없어서 만들었습니다.
 
 ---
 
@@ -133,6 +153,9 @@ A: [docs/troubleshooting.md](docs/troubleshooting.md) 먼저 확인. 그래도 �
 
 **Q: 회사 노트북에서도 되나요?**
 A: 권한 정책에 따라 다름. `npm install -g`가 막히면 IT 부서 협의 필요.
+
+**Q: 다른 인기 Claude Code 키트(awesome-claude-code, claude-code-templates 등)와 같이 쓸 수 있나요?**
+A: 네. 이 키트로 "환경 셋업"을 끝낸 후, 그쪽 키트의 agents/skills/commands를 추가로 가져다 쓰면 됩니다. 충돌 X.
 
 ---
 
