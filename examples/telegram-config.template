@@ -1,0 +1,10 @@
+# Telegram Bot 설정 템플릿
+# 위치: ~/.claude/channels/telegram/.env
+#
+# 안내:
+# 1. BotFather에서 토큰 발급 (docs/07-telegram-bot.md 참조)
+# 2. 이 파일을 ~/.claude/channels/telegram/.env로 복사
+# 3. YOUR_TOKEN_HERE를 실제 토큰으로 교체
+# 4. .gitignore에 .env 추가 (절대 커밋 X)
+
+TELEGRAM_BOT_TOKEN=YOUR_TOKEN_HERE

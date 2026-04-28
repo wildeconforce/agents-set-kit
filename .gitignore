@@ -1,0 +1,23 @@
+# 비밀 파일 — 절대 커밋 금지
+.env
+.env.local
+*.token
+*-secret*
+*credentials*
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.log

@@ -1,0 +1,14 @@
+{
+  "_comment": "Telegram access 정책 — ~/.claude/channels/telegram/access.json",
+  "_setup": [
+    "1. dmPolicy 선택: 'allowlist' (지정한 사람만) | 'pairing' (페어링 후 등록) | 'disabled'",
+    "2. allowFrom에 본인 텔레그램 user ID 추가",
+    "3. 본인 ID 받기: 봇한테 /start 보낸 후 https://api.telegram.org/bot<토큰>/getUpdates 확인"
+  ],
+  "dmPolicy": "allowlist",
+  "allowFrom": [
+    "YOUR_TELEGRAM_USER_ID"
+  ],
+  "groups": {},
+  "pending": {}
+}
