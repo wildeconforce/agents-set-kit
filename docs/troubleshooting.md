@@ -23,7 +23,13 @@ OpenClaw 2026.4.27 버전부터 `models.providers.openrouter.baseUrl` 필드가 
 
 OpenClaw 처음 쓰는 학생도 한 줄로 끝. **빈 config 만들고 baseUrl 설정까지 한 번에.**
 
-**Windows (PowerShell):**
+**Windows CMD (검은 명령 프롬프트):**
+
+```
+if not exist "%USERPROFILE%\.openclaw" mkdir "%USERPROFILE%\.openclaw" & if not exist "%USERPROFILE%\.openclaw\openclaw.json" echo {} > "%USERPROFILE%\.openclaw\openclaw.json" & openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
+```
+
+**Windows PowerShell (파란 창):**
 
 ```
 $d="$env:USERPROFILE\.openclaw"; if(!(Test-Path $d)){mkdir $d|Out-Null}; if(!(Test-Path "$d\openclaw.json")){'{}'|Out-File "$d\openclaw.json" -Encoding utf8}; openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
