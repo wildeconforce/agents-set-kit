@@ -29,11 +29,13 @@ OpenClaw 처음 쓰는 학생도 한 줄로 끝. **빈 config 만들고 baseUrl 
 if not exist "%USERPROFILE%\.openclaw" mkdir "%USERPROFILE%\.openclaw" & if not exist "%USERPROFILE%\.openclaw\openclaw.json" echo {} > "%USERPROFILE%\.openclaw\openclaw.json" & openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
 ```
 
-**Windows PowerShell (파란 창):**
+**Windows PowerShell (파란 창)** — 보안 정책 푸는 명령 포함:
 
 ```
-$d="$env:USERPROFILE\.openclaw"; if(!(Test-Path $d)){mkdir $d|Out-Null}; if(!(Test-Path "$d\openclaw.json")){'{}'|Out-File "$d\openclaw.json" -Encoding utf8}; openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; $d="$env:USERPROFILE\.openclaw"; if(!(Test-Path $d)){mkdir $d|Out-Null}; if(!(Test-Path "$d\openclaw.json")){'{}'|Out-File "$d\openclaw.json" -Encoding utf8}; openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
 ```
+
+> "이 시스템에서 스크립트를 실행할 수 없으므로 ..." 에러 나오면 위 명령의 맨 앞 `Set-ExecutionPolicy ... -Force` 부분이 해결. 한 번 실행하면 그 사용자에게 영구 적용. 또는 CMD 쪽으로 갈아타도 됨.
 
 **Mac / Linux:**
 
