@@ -1,5 +1,9 @@
 # 07 — 텔레그램 봇 연동
 
+<!-- header-image -->
+![Telegram Bot](images/05-telegram.webp)
+
+
 > **목표**: 폰에서 텔레그램 메시지로 AI한테 명령 → PC가 일하고 답이 폰으로.
 > **시간**: 30분.
 

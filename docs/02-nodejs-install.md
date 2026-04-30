@@ -1,5 +1,9 @@
 # 02 — Node.js 설치
 
+<!-- header-image -->
+![Installation](images/07-installation.webp)
+
+
 > **목표**: `node --version` 명령이 작동.
 > **시간**: 5분.
 

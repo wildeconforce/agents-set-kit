@@ -1,5 +1,9 @@
 # 03 — Claude Code 설치
 
+<!-- header-image -->
+![Claude Code](images/01-claude-code.webp)
+
+
 > **목표**: 터미널에서 Claude한테 자연어로 명령.
 > **시간**: 15분.
 

@@ -1,5 +1,9 @@
 # 🆘 Troubleshooting — 막힐 때 처음 보는 곳
 
+<!-- header-image -->
+![Troubleshooting](images/08-troubleshooting.webp)
+
+
 ## 🔍 진단 우선순위
 
 순서대로 시도:

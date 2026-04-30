@@ -1,5 +1,9 @@
 # 05 — OpenRouter 무료 모델
 
+<!-- header-image -->
+![OpenRouter](images/04-openrouter.webp)
+
+
 > **목표**: 결제카드 없이 진짜 무료로 100가지 AI 모델 사용.
 > **시간**: 20분.
 

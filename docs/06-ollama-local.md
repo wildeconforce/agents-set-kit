@@ -1,5 +1,9 @@
 # 06 — Ollama 로컬 모델
 
+<!-- header-image -->
+![Ollama Local](images/03-ollama-local.webp)
+
+
 > **목표**: 본인 PC에서 AI 모델 실행 — 무한정 무료, 데이터 외부 X.
 > **시간**: 30분 (다운로드 시간 포함).
 

@@ -3,6 +3,10 @@
 > **5개 AI 도구를 한 번에 셋업하는 한국어 가이드.**
 > Claude Code · OpenClaw · Ollama · OpenRouter · Telegram 봇 — 처음부터 끝까지.
 
+
+<!-- header-image -->
+![Agents Set Kit](docs/images/hero-banner.webp)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-active-brightgreen.svg)]()
 [![Korean](https://img.shields.io/badge/lang-한국어-blue.svg)](README.md)

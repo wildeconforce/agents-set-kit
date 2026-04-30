@@ -1,5 +1,9 @@
 # 04 — OpenClaw 설치
 
+<!-- header-image -->
+![OpenClaw](images/02-openclaw.webp)
+
+
 > **목표**: 무료 모델 여러 개를 한 곳에서 사용.
 > **시간**: 30분.
 
