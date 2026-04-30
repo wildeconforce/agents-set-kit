@@ -19,19 +19,29 @@ Invalid input: expected string, received undefined
 OpenClaw 2026.4.27 버전부터 `models.providers.openrouter.baseUrl` 필드가 **필수**.
 이전 버전은 기본값 자동 사용했지만, 새 버전은 명시적으로 적어줘야 함.
 
-### 즉시 해결 (한 줄)
+### 즉시 해결 (한 줄, 폴더+파일 자동 생성 포함)
 
-터미널에서:
+OpenClaw 처음 쓰는 학생도 한 줄로 끝. **빈 config 만들고 baseUrl 설정까지 한 번에.**
 
-```bash
-openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
+**Windows (PowerShell):**
+
+```
+$d="$env:USERPROFILE\.openclaw"; if(!(Test-Path $d)){mkdir $d|Out-Null}; if(!(Test-Path "$d\openclaw.json")){'{}'|Out-File "$d\openclaw.json" -Encoding utf8}; openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
+```
+
+**Mac / Linux:**
+
+```
+mkdir -p ~/.openclaw && echo '{}' > ~/.openclaw/openclaw.json && openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
 ```
 
 엔터 → 다시 `openclaw` 실행. 끝.
 
+> 위 코드 박스(```)는 마크다운 표시용이니 명령 안의 텍스트만 복사하세요.
+
 ### 작동 확인
 
-```bash
+```
 openclaw --version
 openclaw
 ```
