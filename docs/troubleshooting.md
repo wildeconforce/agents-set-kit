@@ -3,6 +3,66 @@
 <!-- header-image -->
 ![Troubleshooting](images/08-troubleshooting.webp)
 
+---
+
+## ⚡ 강의 중 핫픽스 (2026-04-30) — OpenClaw `baseUrl` 누락 에러
+
+### 증상
+```
+🦞 OpenClaw 2026.4.27 (cbc2ba0) — I keep secrets like a vault...
+
+Error: Config validation failed: models.providers.openrouter.baseUrl:
+Invalid input: expected string, received undefined
+```
+
+### 원인
+OpenClaw 2026.4.27 버전부터 `models.providers.openrouter.baseUrl` 필드가 **필수**.
+이전 버전은 기본값 자동 사용했지만, 새 버전은 명시적으로 적어줘야 함.
+
+### 즉시 해결 (한 줄)
+
+터미널에서:
+
+```bash
+openclaw config set models.providers.openrouter.baseUrl https://openrouter.ai/api/v1
+```
+
+엔터 → 다시 `openclaw` 실행. 끝.
+
+### 작동 확인
+
+```bash
+openclaw --version
+openclaw
+```
+
+`baseUrl: ... undefined` 에러 사라지면 OK.
+
+### 안 먹으면 — config 파일 직접 편집
+
+위치:
+- Windows: `C:\Users\<유저>\.openclaw\openclaw.json`
+- Mac/Linux: `~/.openclaw/openclaw.json`
+
+해당 섹션을 다음과 같이:
+
+```json
+{
+  "models": {
+    "providers": {
+      "openrouter": {
+        "apiKey": "sk-or-v1-여러분의키",
+        "baseUrl": "https://openrouter.ai/api/v1"
+      }
+    }
+  }
+}
+```
+
+저장 → `openclaw` 재실행.
+
+---
+
 
 ## 🔍 진단 우선순위
 
