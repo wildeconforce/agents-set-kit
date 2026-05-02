@@ -1,9 +1,15 @@
 # =====================================================================
-# Vericum Agent 원클릭 설치 스크립트 v3.0
+# Vericum Agent Kit v4.0 (Windows) — 한국어 OpenClaw + Gemini + Telegram
 # 대상: 강의 수강생 (클린 PC, Windows 10+)
 # 모델: Gemini 3.1 Pro Preview (무료, Google AI Studio)
-# 채널: Telegram
+# 채널: Telegram (모드 B) 또는 TUI 만 (모드 A, Telegram 추후 추가)
 # 베이스: openclaw-desktop v0.7.0+openclaw.2026.4.2 (공식 .exe)
+#
+# v4 변경점 (v3.0.1 대비):
+#  - 모드 선택 (A=단계별 / B=원클릭) 분기 추가
+#  - 모드 A: provider 셋업 후 TUI 동작 확인 → Telegram 은 선택사항
+#  - 모드 B: 현 v3.0.1 흐름 (provider+channel+gateway 한 번에)
+#  - 모드별 마법사 안내 텍스트 분기
 # =====================================================================
 
 # === 콘솔 인코딩 (한글 출력 깨짐 방지) ===
@@ -41,20 +47,52 @@ trap {
 Clear-Host
 Write-Host ""
 Write-Host "  ================================================" -ForegroundColor Cyan
-Write-Host "    Vericum Agent 원클릭 설치 v3.0" -ForegroundColor Cyan
+Write-Host "    Vericum Agent Kit v4.0 (Windows)" -ForegroundColor Cyan
 Write-Host "    Gemini 3.1 Pro Preview + Telegram" -ForegroundColor Gray
 Write-Host "  ================================================" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "  미리 준비할 것 (강사가 함께 발급해드립니다):" -ForegroundColor Yellow
+Write-Host "    - Google 계정 (Gemini API 키 발급용)" -ForegroundColor White
+Write-Host "    - Telegram 계정 (봇 만들기용, 모드 B 에서만 필요)" -ForegroundColor White
+Write-Host ""
+
+# === 모드 선택 (v4 신규) ===
+Write-Host "  진행 방식을 선택해주세요:" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "  [B] 빠르게 (원클릭) — 한 번에 Telegram 까지" -ForegroundColor Cyan
+Write-Host "      - 약 10~15분, AI 가 폰 텔레그램에서 답함" -ForegroundColor Gray
+Write-Host "      - 강의 / 입문자 추천" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  [A] 단계별 — TUI 먼저 동작 확인 → Telegram 은 나중에" -ForegroundColor Cyan
+Write-Host "      - 약 15~25분, OpenClaw 자체를 먼저 익힘" -ForegroundColor Gray
+Write-Host "      - 학습 / 디버깅 / Telegram 안 쓸 사용자 추천" -ForegroundColor Gray
+Write-Host ""
+$mode = ""
+while ($mode -ne "A" -and $mode -ne "B") {
+    $mode = (Read-Host "  선택 (A/B) [기본 B]").Trim().ToUpper()
+    if ($mode -eq "") { $mode = "B" }
+}
+Write-Host ""
+if ($mode -eq "B") {
+    ok "모드 B 선택 — 한 번에 Telegram 까지"
+} else {
+    ok "모드 A 선택 — TUI 먼저, Telegram 은 선택사항"
+}
+Write-Host ""
+
+# === 진행 순서 ===
 Write-Host "  진행 순서:" -ForegroundColor Yellow
 Write-Host "    1. Windows 환경 확인" -ForegroundColor White
 Write-Host "    2. OpenClaw Desktop 설치" -ForegroundColor White
-Write-Host "    3. 마법사로 Gemini + Telegram 셋팅 (강사가 옆에서 안내)" -ForegroundColor White
-Write-Host "    4. 봇 페어링" -ForegroundColor White
-Write-Host "    5. 동작 확인" -ForegroundColor White
-Write-Host ""
-Write-Host "  미리 준비할 것 (강사가 함께 발급해드립니다):" -ForegroundColor Yellow
-Write-Host "    - Google 계정 (Gemini API 키 발급용)" -ForegroundColor White
-Write-Host "    - Telegram 계정 (봇 만들기용)" -ForegroundColor White
+if ($mode -eq "B") {
+    Write-Host "    3. 마법사로 Gemini + Telegram 셋팅" -ForegroundColor White
+    Write-Host "    4. 봇 페어링" -ForegroundColor White
+    Write-Host "    5. 동작 확인 (텔레그램 봇)" -ForegroundColor White
+} else {
+    Write-Host "    3. 마법사로 Gemini 셋팅 (Channel 단계는 SKIP)" -ForegroundColor White
+    Write-Host "    4. TUI / 데스크탑 챗에서 동작 확인" -ForegroundColor White
+    Write-Host "    5. (선택) Telegram 추가 안내" -ForegroundColor White
+}
 Write-Host ""
 Read-Host "  준비됐으면 Enter 키"
 
@@ -120,7 +158,7 @@ Start-Process -FilePath $installer -Wait
 ok "OpenClaw Desktop 설치 완료"
 
 # === STEP 3: 첫 실행 + 셋팅 마법사 안내 ===
-step "STEP 3/5  Gemini + Telegram 셋팅"
+step "STEP 3/5  마법사 셋팅"
 
 Write-Host ""
 Write-Host "  지금부터 OpenClaw Desktop 앱이 실행됩니다." -ForegroundColor Cyan
@@ -134,12 +172,19 @@ Write-Host "    API 키: AI Studio 에서 발급 (https://aistudio.google.com)" 
 Write-Host "      → Google 로그인 → 좌측 Get API key → Create API key → 복사" -ForegroundColor Gray
 Write-Host "    모델: gemini-3.1-pro-preview 또는 google/gemini-3.1-pro" -ForegroundColor Gray
 Write-Host ""
-Write-Host "  2단계 - Channel (채널)" -ForegroundColor White
-Write-Host "    선택: Telegram" -ForegroundColor Gray
-Write-Host "    봇 토큰: BotFather 에서 발급" -ForegroundColor Gray
-Write-Host "      → Telegram 에서 @BotFather 검색 → /newbot → 봇 이름 입력" -ForegroundColor Gray
-Write-Host "      → 봇 username 입력 (끝이 _bot 으로 끝나야 함, 예: my_agent_bot)" -ForegroundColor Gray
-Write-Host "      → 토큰 복사" -ForegroundColor Gray
+if ($mode -eq "B") {
+    Write-Host "  2단계 - Channel (채널) [모드 B: 진행]" -ForegroundColor White
+    Write-Host "    선택: Telegram" -ForegroundColor Gray
+    Write-Host "    봇 토큰: BotFather 에서 발급" -ForegroundColor Gray
+    Write-Host "      → Telegram 에서 @BotFather 검색 → /newbot → 봇 이름 입력" -ForegroundColor Gray
+    Write-Host "      → 봇 username 입력 (끝이 _bot 으로 끝나야 함, 예: my_agent_bot)" -ForegroundColor Gray
+    Write-Host "      → 토큰 복사" -ForegroundColor Gray
+} else {
+    Write-Host "  2단계 - Channel (채널) [모드 A: SKIP]" -ForegroundColor Yellow
+    Write-Host "    → 'Skip' / '나중에' / '닫기' 버튼 누르고 다음 단계로" -ForegroundColor Gray
+    Write-Host "    → 버튼이 안 보이면 가짜 토큰 (예: '0:0') 입력 → 에러 무시 → 다음" -ForegroundColor Gray
+    Write-Host "    → Telegram 은 STEP 5 에서 별도로 추가 (선택사항)" -ForegroundColor Gray
+}
 Write-Host ""
 Write-Host "  3단계 - Gateway (게이트웨이)" -ForegroundColor White
 Write-Host "    Mode: local" -ForegroundColor Gray
@@ -167,32 +212,76 @@ if (-not $launched) {
 }
 
 Write-Host ""
-Write-Host "  마법사 다 마치고 봇한테 /start 보낸 후 Enter 키 눌러주세요." -ForegroundColor Yellow
+if ($mode -eq "B") {
+    Write-Host "  마법사 다 마치고 봇한테 /start 보낸 후 Enter 키 눌러주세요." -ForegroundColor Yellow
+} else {
+    Write-Host "  마법사 다 마치고 (Channel SKIP 또는 가짜 토큰) Enter 키 눌러주세요." -ForegroundColor Yellow
+}
 Read-Host
 
-# === STEP 4: 페어링 확인 ===
-step "STEP 4/5  봇 페어링 확인"
+# === STEP 4: 동작 확인 (모드별) ===
+if ($mode -eq "B") {
+    step "STEP 4/5  봇 페어링 확인"
 
-Write-Host ""
-Write-Host "  Telegram 본인 봇한테 /start 명령을 보냈나요?" -ForegroundColor Yellow
-Write-Host "  봇이 8자리 페어링 코드를 답장했어야 합니다." -ForegroundColor Gray
-Write-Host ""
-Write-Host "  - 코드를 받으셨으면: OpenClaw Desktop 앱 안에서 코드를 입력 또는" -ForegroundColor White
-Write-Host "    PowerShell 에서 'openclaw pairing approve telegram <코드>' 실행" -ForegroundColor White
-Write-Host "  - 코드가 안 왔으면: 봇 username 다시 확인 / Telegram 강제 종료 후 재시도" -ForegroundColor White
-Write-Host ""
-Read-Host "  페어링 완료되면 Enter"
+    Write-Host ""
+    Write-Host "  Telegram 본인 봇한테 /start 명령을 보냈나요?" -ForegroundColor Yellow
+    Write-Host "  봇이 8자리 페어링 코드를 답장했어야 합니다." -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "  - 코드를 받으셨으면: OpenClaw Desktop 앱 안에서 코드를 입력 또는" -ForegroundColor White
+    Write-Host "    PowerShell 에서 'openclaw pairing approve telegram <코드>' 실행" -ForegroundColor White
+    Write-Host "  - 코드가 안 왔으면: 봇 username 다시 확인 / Telegram 강제 종료 후 재시도" -ForegroundColor White
+    Write-Host ""
+    Read-Host "  페어링 완료되면 Enter"
 
-# === STEP 5: 동작 확인 ===
-step "STEP 5/5  최종 동작 확인"
+    # === STEP 5 (모드 B): 동작 확인 ===
+    step "STEP 5/5  최종 동작 확인 (Telegram 봇)"
 
-Write-Host ""
-Write-Host "  Telegram 봇한테 다음 메시지를 보내보세요:" -ForegroundColor Cyan
-Write-Host "    안녕! 한국어로 자기소개 해줘" -ForegroundColor White
-Write-Host ""
-Write-Host "  Gemini 가 한국어로 답하면 = 설치 성공!" -ForegroundColor Green
-Write-Host ""
-Read-Host "  답이 왔으면 Enter, 안 왔으면 Ctrl+C 후 강사한테 화면 캡처 전송"
+    Write-Host ""
+    Write-Host "  Telegram 봇한테 다음 메시지를 보내보세요:" -ForegroundColor Cyan
+    Write-Host "    안녕! 한국어로 자기소개 해줘" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  Gemini 가 한국어로 답하면 = 설치 성공!" -ForegroundColor Green
+    Write-Host ""
+    Read-Host "  답이 왔으면 Enter, 안 왔으면 Ctrl+C 후 강사한테 화면 캡처 전송"
+} else {
+    # === STEP 4 (모드 A): TUI / 데스크탑 챗 동작 확인 ===
+    step "STEP 4/5  TUI 동작 확인"
+
+    Write-Host ""
+    Write-Host "  OpenClaw Desktop 앱의 채팅 화면에서 직접 메시지를 보내보세요:" -ForegroundColor Cyan
+    Write-Host "    안녕! 한국어로 자기소개 해줘" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  Gemini 가 한국어로 답하면 = OpenClaw + Gemini 셋업 성공!" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  (TUI 채팅 위치: 데스크탑 앱 내 'Chat' 탭 또는 사이드바)" -ForegroundColor Gray
+    Write-Host ""
+    Read-Host "  답이 왔으면 Enter, 안 왔으면 Ctrl+C 후 강사한테 화면 캡처 전송"
+
+    # === STEP 5 (모드 A): Telegram 추가 (선택사항) ===
+    step "STEP 5/5  Telegram 추가 (선택사항)"
+
+    Write-Host ""
+    Write-Host "  Telegram 봇 연동을 추가할까요?" -ForegroundColor Yellow
+    Write-Host "  [Y] 네, 지금 추가" -ForegroundColor Cyan
+    Write-Host "  [N] 아니요, TUI 만 사용 (나중에 추가 가능)" -ForegroundColor Cyan
+    Write-Host ""
+    $addTg = (Read-Host "  선택 (Y/N) [기본 N]").Trim().ToUpper()
+    if ($addTg -eq "Y") {
+        Write-Host ""
+        Write-Host "  [Telegram 추가 절차]" -ForegroundColor Yellow
+        Write-Host "    1. Telegram 에서 @BotFather → /newbot → 봇 토큰 복사" -ForegroundColor Gray
+        Write-Host "    2. 데스크탑 앱 → Settings → Channels → Add Telegram → 토큰 입력" -ForegroundColor Gray
+        Write-Host "       또는 PowerShell:" -ForegroundColor Gray
+        Write-Host "         openclaw channels add --channel telegram --token <토큰>" -ForegroundColor White
+        Write-Host "    3. 봇한테 /start → 8자리 페어링 코드 받음" -ForegroundColor Gray
+        Write-Host "    4. PowerShell:  openclaw pairing approve telegram <코드>" -ForegroundColor White
+        Write-Host "    5. 봇한테 메시지 보내서 답 오는지 확인" -ForegroundColor Gray
+        Write-Host ""
+        Read-Host "  Telegram 추가 완료되면 Enter (또는 그만하려면 Ctrl+C)"
+    } else {
+        ok "TUI 모드 유지 — 나중에 Telegram 추가 가능"
+    }
+}
 
 # === 마무리 ===
 Write-Host ""
@@ -201,8 +290,12 @@ Write-Host "    축하합니다! 에이전트가 살아났습니다." -Foregroun
 Write-Host "  ================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "  사용법:" -ForegroundColor Cyan
-Write-Host "    - Telegram 봇한테 채팅 = 일반 대화" -ForegroundColor White
-Write-Host "    - 봇 명령어: /start, /help, /status" -ForegroundColor White
+if ($mode -eq "B") {
+    Write-Host "    - Telegram 봇한테 채팅 = 일반 대화" -ForegroundColor White
+    Write-Host "    - 봇 명령어: /start, /help, /status" -ForegroundColor White
+} else {
+    Write-Host "    - 데스크탑 앱 채팅 화면에서 대화" -ForegroundColor White
+}
 Write-Host "    - 시스템 트레이 (오른쪽 아래) OpenClaw 아이콘 우클릭 = 메뉴" -ForegroundColor White
 Write-Host ""
 Write-Host "  [에이전트 권한 (파일 읽기/쓰기/자동화) 활성화는 별도 단계]" -ForegroundColor Yellow

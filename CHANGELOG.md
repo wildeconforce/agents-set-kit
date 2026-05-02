@@ -1,6 +1,44 @@
 # Changelog
 
-## [v3.0.1] — 2026-05-02
+## [v4.0] — 2026-05-02 오후
+
+### Agent Kit v4 — 모드 선택 분기 (A=단계별 / B=원클릭)
+
+**배경**: v3.0.1 은 "한 번에 Telegram 까지" 단일 흐름이었음. Jack 의 통찰 — 입문자/디버깅/학습/Telegram 안 쓸 사용자 등 다양한 시나리오 대응 필요. 양쪽 다 가치 있어 모드 분기로 통합.
+
+**모드 B (원클릭, 기본값)**
+- 현 v3.0.1 흐름 그대로 (provider + channel + gateway 한 번에)
+- 약 10~15분
+- 입력: Gemini API 키 + Telegram 봇 토큰 + 페어링 코드
+- 결과: 폰에서 텔레그램 봇 챗
+- 타깃: 입문자 / 강의
+
+**모드 A (단계별, NEW)**
+- provider + gateway 만 셋업 → TUI 동작 확인 → Telegram 은 선택사항
+- 약 15~25분
+- 입력: Gemini API 키만 (Telegram 추가시 +봇토큰+코드)
+- 결과: 데스크탑 챗 화면 (모드 A) / `openclaw chat` TUI (Mac)
+- 타깃: 학습 / 디버깅 / OpenClaw 자체 익히기 / Telegram 안 쓸 사람
+
+**구현 위치**
+- `kits/agent_kit_v4/windows/setup.ps1` — `$mode` 변수 + 분기 (모드 A 면 wizard channel 단계 SKIP 안내)
+- `kits/agent_kit_v4/mac/setup.sh` — `$MODE` 변수 + 분기 (`openclaw onboard` 에서 Channel SKIP 안내)
+- 두 키트 모두 wizard 시작 전에 모드 선택 prompt
+- 모드 A 의 STEP 5 = Telegram 추가 선택 (Y/N), Y 면 안내 명령 표시
+
+**디렉토리 변경**: `kits/agent_kit_v3/` → `kits/agent_kit_v4/` (git rename, 히스토리 보존)
+
+**검증 (2026-05-02 정적)**
+- ✅ Bash 구문 (`bash -n setup.sh`)
+- ✅ PowerShell 구문 (`Parser.ParseFile`)
+- ✅ 모드 분기 흐름 (A/B 양쪽 logical 흐름 검증)
+- ✅ Mac arch 분기 (arm64/x86_64)
+- ✅ Windows BAT 안전장치 (chcp 65001 + ExecutionPolicy + NoProfile + pwsh fallback)
+- ⚠️ 실제 실행 검증 (end-to-end) 보류 — 베타 테스터 모집
+
+---
+
+## [v3.0.1] — 2026-05-02 새벽
 
 ### Agent Kit v3 (신규)
 

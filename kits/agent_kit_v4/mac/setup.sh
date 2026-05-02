@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Vericum Agent 원클릭 설치 스크립트 v3.0.1 (macOS)
+# Vericum Agent Kit v4.0 (macOS) — 한국어 OpenClaw + Gemini + Telegram
 # 대상: 강의 수강생 (클린 Mac, Intel + Apple Silicon 모두 지원)
 # 모델: Gemini 3.1 Pro Preview (무료, Google AI Studio)
-# 채널: Telegram
+# 채널: Telegram (모드 B) 또는 TUI 만 (모드 A, Telegram 추후)
 # 베이스: openclaw 공식 install.sh (curl pipe to bash)
 #
-# v3.0.1 hardening:
-#   - PATH: Homebrew Apple Silicon (/opt/homebrew) + Intel (/usr/local) 명시
+# v4 변경점 (v3.0.1 대비):
+#   - 모드 선택 (A=단계별 / B=원클릭) 분기
+#   - 모드 A: provider 셋업 → TUI 동작 확인 → Telegram 선택사항
+#   - 모드 B: 현 v3.0.1 흐름 (provider+channel 한 번에)
+#
+# v3.0.1 hardening (유지):
+#   - PATH: Homebrew Apple Silicon (/opt/homebrew) + Intel (/usr/local)
 #   - install.sh 실행 로그 캡처 ($HOME/openclaw_install.log)
 #   - Homebrew 첫 설치 시 sudo 비밀번호 prompt 사전 안내
 #   - 로케일 fallback (ko_KR.UTF-8 미지원 → en_US.UTF-8)
-#   - 아키텍처 감지 + 로그 (postmortem 용)
+#   - 아키텍처 감지 + 로그
 #   - hash -r 로 셸 명령 캐시 갱신
 #   - openclaw 명령 절대경로 fallback
 # =====================================================================
@@ -64,20 +69,54 @@ trap 'echo ""; err "예기치 못한 오류로 스크립트가 중단되었습�
 clear
 echo ""
 echo -e "  ${CYAN}================================================${NC}"
-echo -e "  ${CYAN}  Vericum Agent 원클릭 설치 v3.0.1 (macOS)${NC}"
+echo -e "  ${CYAN}  Vericum Agent Kit v4.0 (macOS)${NC}"
 echo -e "  ${GRAY}  Gemini 3.1 Pro Preview + Telegram${NC}"
 echo -e "  ${CYAN}================================================${NC}"
 echo ""
+echo -e "  ${YELLOW}미리 준비할 것 (강사가 함께 발급해드립니다):${NC}"
+echo "    - Google 계정 (Gemini API 키 발급용)"
+echo "    - Telegram 계정 (봇 만들기용, 모드 B 에서만 필요)"
+echo ""
+
+# === 모드 선택 (v4 신규) ===
+echo -e "  ${YELLOW}진행 방식을 선택해주세요:${NC}"
+echo ""
+echo -e "  ${CYAN}[B] 빠르게 (원클릭)${NC} — 한 번에 Telegram 까지"
+echo -e "      ${GRAY}- 약 10~15분, AI 가 폰 텔레그램에서 답함${NC}"
+echo -e "      ${GRAY}- 강의 / 입문자 추천${NC}"
+echo ""
+echo -e "  ${CYAN}[A] 단계별${NC} — TUI 먼저 동작 확인 → Telegram 은 나중에"
+echo -e "      ${GRAY}- 약 15~25분, OpenClaw 자체를 먼저 익힘${NC}"
+echo -e "      ${GRAY}- 학습 / 디버깅 / Telegram 안 쓸 사용자 추천${NC}"
+echo ""
+MODE=""
+while [ "$MODE" != "A" ] && [ "$MODE" != "B" ]; do
+    read -p "  선택 (A/B) [기본 B]: " MODE
+    MODE=$(echo "$MODE" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]')
+    if [ -z "$MODE" ]; then MODE="B"; fi
+done
+echo ""
+if [ "$MODE" = "B" ]; then
+    ok "모드 B 선택 — 한 번에 Telegram 까지"
+else
+    ok "모드 A 선택 — TUI 먼저, Telegram 은 선택사항"
+fi
+echo "MODE=$MODE" >> "$LOG_FILE"
+echo ""
+
+# === 진행 순서 ===
 echo -e "  ${YELLOW}진행 순서:${NC}"
 echo "    1. Mac 환경 확인 (아키텍처/로케일/기존 설치)"
 echo "    2. OpenClaw 설치 (공식 install.sh)"
-echo "    3. 마법사 (onboard) 로 Gemini + Telegram 셋팅"
-echo "    4. 봇 페어링"
-echo "    5. 동작 확인"
-echo ""
-echo -e "  ${YELLOW}미리 준비할 것 (강사가 함께 발급해드립니다):${NC}"
-echo "    - Google 계정 (Gemini API 키 발급용)"
-echo "    - Telegram 계정 (봇 만들기용)"
+if [ "$MODE" = "B" ]; then
+    echo "    3. 마법사 (onboard) 로 Gemini + Telegram 셋팅"
+    echo "    4. 봇 페어링"
+    echo "    5. 동작 확인 (텔레그램 봇)"
+else
+    echo "    3. 마법사 (onboard) 로 Gemini 셋팅 (Channel 단계는 SKIP)"
+    echo "    4. TUI 에서 동작 확인"
+    echo "    5. (선택) Telegram 추가 안내"
+fi
 echo ""
 echo -e "  ${GRAY}  로그 파일: $LOG_FILE${NC}"
 echo ""
@@ -216,7 +255,7 @@ ok "OpenClaw $OC_VER 설치 완료 ($OPENCLAW_BIN)"
 echo "OPENCLAW_BIN=$OPENCLAW_BIN OC_VER=$OC_VER" >> "$LOG_FILE"
 
 # === STEP 3: Onboard (대화형 마법사) ===
-step "STEP 3/5  Gemini + Telegram 셋팅 (onboard 마법사)"
+step "STEP 3/5  마법사 셋팅 (onboard)"
 
 echo ""
 echo -e "  ${CYAN}지금부터 OpenClaw 의 onboard 마법사가 시작됩니다.${NC}"
@@ -228,10 +267,17 @@ echo "    → API 키: AI Studio 에서 발급 (https://aistudio.google.com)"
 echo "      Google 로그인 → Get API key → Create API key → 복사"
 echo "    → 모델: gemini-3.1-pro-preview"
 echo ""
-echo -e "  ${YELLOW}[Channel 선택]${NC}"
-echo "    → Telegram"
-echo "    → 봇 토큰: BotFather 에서 발급"
-echo "      Telegram 에서 @BotFather → /newbot → 봇 이름 → username (끝 _bot) → 토큰 복사"
+if [ "$MODE" = "B" ]; then
+    echo -e "  ${YELLOW}[Channel 선택] [모드 B: 진행]${NC}"
+    echo "    → Telegram"
+    echo "    → 봇 토큰: BotFather 에서 발급"
+    echo "      Telegram 에서 @BotFather → /newbot → 봇 이름 → username (끝 _bot) → 토큰 복사"
+else
+    echo -e "  ${YELLOW}[Channel 선택] [모드 A: SKIP]${NC}"
+    echo "    → 'Skip' / '나중에' / 'No channel' 선택 (또는 Channel 단계에서 그냥 Enter)"
+    echo "    → 만약 토큰 입력 강제되면 가짜 토큰 (예: '0:0') 입력 → 에러 무시"
+    echo "    → Telegram 은 STEP 5 에서 별도 추가 (선택사항)"
+fi
 echo ""
 echo -e "  ${YELLOW}[Gateway]${NC}"
 echo "    → Mode: local"
@@ -241,29 +287,73 @@ read -p "  준비됐으면 Enter 키"
 
 "$OPENCLAW_BIN" onboard
 
-# === STEP 4: 페어링 확인 ===
-step "STEP 4/5  봇 페어링 확인"
+# === STEP 4 (모드별): 동작 확인 ===
+if [ "$MODE" = "B" ]; then
+    step "STEP 4/5  봇 페어링 확인"
 
-echo ""
-echo -e "  ${YELLOW}Telegram 본인 봇한테 /start 명령을 보냈나요?${NC}"
-echo "  봇이 8자리 페어링 코드를 답장했어야 합니다."
-echo ""
-echo "  - 코드를 받으셨으면: 터미널에서"
-echo "      openclaw pairing approve telegram <코드>"
-echo "    또는 onboard 마법사가 페어링까지 처리했다면 스킵"
-echo ""
-read -p "  페어링 완료되면 Enter"
+    echo ""
+    echo -e "  ${YELLOW}Telegram 본인 봇한테 /start 명령을 보냈나요?${NC}"
+    echo "  봇이 8자리 페어링 코드를 답장했어야 합니다."
+    echo ""
+    echo "  - 코드를 받으셨으면: 터미널에서"
+    echo "      openclaw pairing approve telegram <코드>"
+    echo "    또는 onboard 마법사가 페어링까지 처리했다면 스킵"
+    echo ""
+    read -p "  페어링 완료되면 Enter"
 
-# === STEP 5: 동작 확인 ===
-step "STEP 5/5  최종 동작 확인"
+    # === STEP 5 (모드 B): 동작 확인 ===
+    step "STEP 5/5  최종 동작 확인 (Telegram 봇)"
 
-echo ""
-echo -e "  ${CYAN}Telegram 봇한테 다음 메시지를 보내보세요:${NC}"
-echo "    안녕! 한국어로 자기소개 해줘"
-echo ""
-echo -e "  ${GREEN}Gemini 가 한국어로 답하면 = 설치 성공!${NC}"
-echo ""
-read -p "  답이 왔으면 Enter, 안 왔으면 Ctrl+C 후 강사한테 화면 + 로그 캡처 전송"
+    echo ""
+    echo -e "  ${CYAN}Telegram 봇한테 다음 메시지를 보내보세요:${NC}"
+    echo "    안녕! 한국어로 자기소개 해줘"
+    echo ""
+    echo -e "  ${GREEN}Gemini 가 한국어로 답하면 = 설치 성공!${NC}"
+    echo ""
+    read -p "  답이 왔으면 Enter, 안 왔으면 Ctrl+C 후 강사한테 화면 + 로그 캡처 전송"
+else
+    # === STEP 4 (모드 A): TUI 동작 확인 ===
+    step "STEP 4/5  TUI 동작 확인"
+
+    echo ""
+    echo -e "  ${CYAN}터미널에서 OpenClaw 챗을 직접 시작합니다:${NC}"
+    echo "    $ openclaw chat"
+    echo ""
+    echo -e "  ${CYAN}대화창이 뜨면 다음 메시지를 입력해보세요:${NC}"
+    echo "    안녕! 한국어로 자기소개 해줘"
+    echo ""
+    echo -e "  ${GREEN}Gemini 가 한국어로 답하면 = OpenClaw + Gemini 셋업 성공!${NC}"
+    echo ""
+    echo -e "  ${GRAY}  (챗 빠져나오기: 'exit' 또는 Ctrl+D)${NC}"
+    echo ""
+    read -p "  TUI 챗 동작 확인 후 Enter (또는 안 되면 Ctrl+C 후 강사한테)"
+
+    # === STEP 5 (모드 A): Telegram 추가 (선택사항) ===
+    step "STEP 5/5  Telegram 추가 (선택사항)"
+
+    echo ""
+    echo -e "  ${YELLOW}Telegram 봇 연동을 추가할까요?${NC}"
+    echo -e "  ${CYAN}[Y]${NC} 네, 지금 추가"
+    echo -e "  ${CYAN}[N]${NC} 아니요, TUI 만 사용 (나중에 추가 가능)"
+    echo ""
+    read -p "  선택 (Y/N) [기본 N]: " ADD_TG
+    ADD_TG=$(echo "$ADD_TG" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]')
+    if [ "$ADD_TG" = "Y" ]; then
+        echo ""
+        echo -e "  ${YELLOW}[Telegram 추가 절차]${NC}"
+        echo "    1. Telegram 에서 @BotFather → /newbot → 봇 토큰 복사"
+        echo "    2. 터미널:"
+        echo "         openclaw channels add --channel telegram --token <토큰>"
+        echo "    3. 봇한테 /start → 8자리 페어링 코드 받음"
+        echo "    4. 터미널:"
+        echo "         openclaw pairing approve telegram <코드>"
+        echo "    5. 봇한테 메시지 보내서 답 오는지 확인"
+        echo ""
+        read -p "  Telegram 추가 완료되면 Enter (또는 그만하려면 Ctrl+C)"
+    else
+        ok "TUI 모드 유지 — 나중에 Telegram 추가 가능"
+    fi
+fi
 
 # === 마무리 ===
 echo ""
@@ -272,8 +362,12 @@ echo -e "  ${GREEN}  축하합니다! 에이전트가 살아났습니다.${NC}"
 echo -e "  ${GREEN}================================================${NC}"
 echo ""
 echo -e "  ${CYAN}사용법:${NC}"
-echo "    - Telegram 봇한테 채팅 = 일반 대화"
-echo "    - 봇 명령어: /start, /help, /status"
+if [ "$MODE" = "B" ]; then
+    echo "    - Telegram 봇한테 채팅 = 일반 대화"
+    echo "    - 봇 명령어: /start, /help, /status"
+else
+    echo "    - 터미널에서 'openclaw chat' = TUI 챗"
+fi
 echo "    - 게이트웨이 상태 확인: openclaw gateway status"
 echo "    - 종합 진단: openclaw doctor"
 echo ""
