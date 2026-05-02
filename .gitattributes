@@ -1,0 +1,15 @@
+# Force LF for Unix shell scripts (Mac/Linux 호환 — CRLF 들어가면 bash 가 \r 으로 해석해 깨짐)
+*.sh        text eol=lf
+*.command   text eol=lf
+
+# Force CRLF for Windows scripts
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+*.cmd       text eol=crlf
+
+# Markdown / text — auto-normalize on checkout
+*.md        text
+*.txt       text
+*.json      text
+*.yml       text
+*.yaml      text

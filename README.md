@@ -79,6 +79,21 @@ claude
 
 ---
 
+## 🆕 v3.0.1 원클릭 키트 (2026-05-02, BETA)
+
+OpenClaw + Gemini 3.1 Pro Preview + Telegram 봇을 **15~20분에** 셋업하는 자동화 키트.
+
+| | Windows | Mac |
+|---|---|---|
+| 📁 폴더 | [`kits/agent_kit_v3/windows/`](kits/agent_kit_v3/windows/) | [`kits/agent_kit_v3/mac/`](kits/agent_kit_v3/mac/) |
+| 진입점 | `01_여기를_더블클릭하세요.bat` | `01_여기를_더블클릭하세요.command` |
+| 베이스 | openclaw-desktop .exe (마법사 GUI) | openclaw 공식 install.sh + onboard CLI |
+
+→ 자세한 사용법: [`kits/agent_kit_v3/README.md`](kits/agent_kit_v3/README.md)
+→ 베타 테스터 환영 — [Issue 등록](https://github.com/wildeconforce/agents-set-kit/issues/new?template=beta_test_report.md)
+
+---
+
 ## 📚 단계별 가이드
 
 순서대로 따라하면 됩니다. 각 단계 10~30분.
